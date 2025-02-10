@@ -1,0 +1,23 @@
+name: mobilelogger
+description: "Flutter front end for LubeLogger"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.6.2
+
+dependencies:
+  flutter:
+    sdk: flutter # Required for any Flutter project
+  http: ^0.13.3 # Used for making HTTP requests
+  uuid: ^3.0.4 # Used for generating unique identifiers
+  sqflite: ^2.0.0+4 # Used for SQLite database operations
+  path: ^1.8.0 # Used for manipulating file paths
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter # Required for testing Flutter applications
+  flutter_lints: ^5.0.0 # Provides linting rules for Flutter projects
+
+flutter:
+  uses-material-design: true
