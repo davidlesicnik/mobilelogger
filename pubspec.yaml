@@ -13,6 +13,7 @@ dependencies:
   uuid: ^3.0.4 # Used for generating unique identifiers
   sqflite: ^2.0.0+4 # Used for SQLite database operations
   path: ^1.8.0 # Used for manipulating file paths
+  intl: ^0.18.0 # Used for formatting dates
 
 dev_dependencies:
   flutter_test:

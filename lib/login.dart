@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:path/path.dart' as path_helper;
 import 'package:sqflite/sqflite.dart';
 import 'homepage.dart';
+import 'vehicle.dart'; // Import the Car class
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -89,13 +90,13 @@ class _LoginPageState extends State<LoginPage> {
         }
 
         final List<dynamic> vehiclesData = json.decode(response.body);
+        final List<Car> cars = vehiclesData.map((data) => Car.fromJson(data)).toList();
 
         if (!mounted) return;
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) =>
-                HomePage(vehiclesData: vehiclesData),
+            builder: (BuildContext context) => HomePage(cars: cars),
           ),
         );
       } else {

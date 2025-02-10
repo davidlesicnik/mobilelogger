@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'vehicle.dart'; // Import the Car class
+import 'vehicledetail.dart'; // Import the VehicleDetailPage
 
 class HomePage extends StatefulWidget {
-  final List<dynamic>? vehiclesData;
+  final List<Car>? cars;
 
-  const HomePage({super.key, this.vehiclesData});
+  const HomePage({super.key, this.cars});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Vehicle> vehicles = [];
+  List<Car> cars = [];
 
   @override
   void initState() {
     super.initState();
-    vehicles =
-        widget.vehiclesData!.map((data) => Vehicle.fromJson(data)).toList();
+    cars = widget.cars!;
   }
 
   @override
@@ -26,12 +26,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Vehicles'),
       ),
-      body: vehicles.isEmpty
+      body: cars.isEmpty
           ? const Center(child: Text('No vehicles found'))
           : ListView.builder(
-              itemCount: vehicles.length,
+              itemCount: cars.length,
               itemBuilder: (context, index) {
-                final vehicle = vehicles[index];
+                final car = cars[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 16.0,
@@ -39,18 +39,25 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: ListTile(
                     title: Text(
-                      '${vehicle.year} ${vehicle.make} ${vehicle.model}',
+                      '${car.year} ${car.make} ${car.model}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                     subtitle: Text(
-                      'License Plate: ${vehicle.licensePlate}',
+                      'License Plate: ${car.licensePlate}',
                       style: const TextStyle(fontSize: 14),
                     ),
                     onTap: () {
-                      // Handle tap on vehicle
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VehicleDetailPage(
+                            car: car,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 );
