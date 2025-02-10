@@ -4,7 +4,7 @@ import 'main.dart';
 class HomePage extends StatefulWidget {
   final List<dynamic>? vehiclesData;
 
-  const HomePage({Key? key, this.vehiclesData}) : super(key: key);
+  const HomePage({super.key, this.vehiclesData});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -16,22 +16,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    print('HomePage initState called');
-    print('Raw vehiclesData: ${widget.vehiclesData}');
-
-    if (widget.vehiclesData != null) {
-      try {
-        vehicles =
-            widget.vehiclesData!.map((data) => Vehicle.fromJson(data)).toList();
-        print('Parsed vehicles length: ${vehicles.length}');
-        print('Parsed vehicles: $vehicles');
-      } catch (e, stackTrace) {
-        print('Error parsing vehicles: $e');
-        print('Stack trace: $stackTrace');
-      }
-    } else {
-      print('vehiclesData is null');
-    }
+    vehicles =
+        widget.vehiclesData!.map((data) => Vehicle.fromJson(data)).toList();
   }
 
   @override

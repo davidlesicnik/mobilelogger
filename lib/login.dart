@@ -6,6 +6,8 @@ import 'package:sqflite/sqflite.dart';
 import 'homepage.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -16,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _urlController = TextEditingController();
   bool _rememberMe = false;
   Database? _database;
+  Future<void>? _loginFuture;
 
   @override
   void initState() {
@@ -72,19 +75,13 @@ class _LoginPageState extends State<LoginPage> {
     final String basicAuth =
         'Basic ${base64Encode(utf8.encode('$username:$password'))}';
 
-    print('Making API call to: https://$url/api/vehicles');
-    print('Using Authorization: $basicAuth');
-
     try {
       final response = await http.get(
-        Uri.parse('https://$url/api/vehicles'),
+        Uri.parse('$url/api/vehicles'),
         headers: <String, String>{
           'authorization': basicAuth,
         },
       );
-
-      print('Response status code: ${response.statusCode}');
-      print('Raw response body: ${response.body}');
 
       if (response.statusCode == 200) {
         if (_rememberMe) {
@@ -92,8 +89,6 @@ class _LoginPageState extends State<LoginPage> {
         }
 
         final List<dynamic> vehiclesData = json.decode(response.body);
-        print('Parsed vehicles data length: ${vehiclesData.length}');
-        print('Parsed vehicles data: $vehiclesData');
 
         if (!mounted) return;
         Navigator.push(
@@ -119,9 +114,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
-    } catch (e, stackTrace) {
-      print('Error during API call: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
       if (!mounted) return;
       showDialog(
         context: context,
@@ -177,9 +170,24 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
+              onPressed: () {
+                setState(() {
+                  _loginFuture = _login();
+                });
+              },
               child: Text('Login'),
             ),
+            if (_loginFuture != null)
+              FutureBuilder<void>(
+                future: _loginFuture,
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
           ],
         ),
       ),
