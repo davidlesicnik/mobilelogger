@@ -4,9 +4,9 @@ MobileLogger is a Flutter-based mobile client for the vehicle expense tracker Lu
 
 ## Features
 
-- User authentication with "Remember Me" functionality
+- User authentication 
 - View a list of vehicles
-- Track expenses related to vehicles
+- View overview of records for each vehicle
 
 ## Getting Started
 
@@ -41,6 +41,9 @@ MobileLogger is a Flutter-based mobile client for the vehicle expense tracker Lu
 - `lib/main.dart`: Entry point of the application.
 - `lib/login.dart`: Contains the login screen and authentication logic.
 - `lib/homepage.dart`: Contains the home screen displaying the list of vehicles.
+- `lib/vehicledetail.dart`: Contains the vehicle detail screen displaying records for a selected vehicle.
+- `lib/vehicle.dart`: Defines the `Car` class used to represent vehicle data.
+- `lib/records_models.dart`: Defines the record models used to represent various types of records.
 
 ## Dependencies
 
@@ -49,6 +52,7 @@ MobileLogger is a Flutter-based mobile client for the vehicle expense tracker Lu
 - `uuid`: Used for generating unique identifiers.
 - `sqflite`: Used for SQLite database operations.
 - `path`: Used for manipulating file paths.
+- `intl`: Used for formatting dates.
 
 ## Contributing
 
