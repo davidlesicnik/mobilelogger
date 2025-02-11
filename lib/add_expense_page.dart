@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'vehicle.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as path_helper;
 import 'records_models.dart';
 
 class AddExpensePage extends StatefulWidget {
@@ -20,11 +24,111 @@ class _AddExpensePageState extends State<AddExpensePage> {
   final _fuelConsumedController = TextEditingController();
   bool _isFillToFull = false;
   bool _missedFuelUp = false;
+  late String baseUrl;
 
   @override
   void initState() {
     super.initState();
     _selectedCategory = 'Gas'; // Set default category to 'Gas'
+    _loadBaseUrl();
+  }
+
+  Future<void> _loadBaseUrl() async {
+    // Load the base URL from the login details
+    final Database database = await openDatabase(
+      path_helper.join(await getDatabasesPath(), 'login_database.db'),
+    );
+    final List<Map<String, dynamic>> maps = await database.query('login');
+    if (maps.isNotEmpty) {
+      final login = maps.first;
+      baseUrl = login['url'];
+    }
+  }
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final url = _getSubmitUrl();
+    final body = _buildRequestBody();
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        _showFeedbackDialog('Success', 'Record saved successfully.');
+      } else {
+        _showFeedbackDialog('Error', 'Failed to save record: ${response.body}');
+      }
+    } catch (e) {
+      _showFeedbackDialog('Error', 'Failed to save record: $e');
+    }
+  }
+
+  void _showFeedbackDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (title == 'Success') {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _getSubmitUrl() {
+    switch (_selectedCategory) {
+      case 'Gas':
+        return '$baseUrl/api/vehicle/gasrecords/add';
+      case 'Service':
+        return '$baseUrl/api/vehicle/servicerecords/add';
+      case 'Repair':
+        return '$baseUrl/api/vehicle/repairrecords/add';
+      case 'Upgrade':
+        return '$baseUrl/api/vehicle/upgraderecords/add';
+      case 'Tax':
+        return '$baseUrl/api/vehicle/taxrecords/add';
+      default:
+        throw Exception('Invalid category');
+    }
+  }
+
+  Map<String, dynamic> _buildRequestBody() {
+    final body = {
+      'vehicleId': widget.car.id,
+      'date': DateTime.now().toIso8601String(),
+      'odometer': _odometerController.text,
+      'cost': _costController.text,
+      'notes': _descriptionController.text,
+      'tags': '',
+      'extraFields': [],
+      'files': [],
+    };
+
+    if (_selectedCategory == 'Gas') {
+      body.addAll({
+        'fuelConsumed': _fuelConsumedController.text,
+        'isFillToFull': _isFillToFull,
+        'missedFuelUp': _missedFuelUp,
+      });
+    }
+
+    return body;
   }
 
   @override
@@ -93,40 +197,39 @@ class _AddExpensePageState extends State<AddExpensePage> {
                 decoration: InputDecoration(labelText: 'Description'),
               ),
               if (_selectedCategory == 'Gas')
-                Row(
-                  children: [
-                    Expanded(
-                      child: SwitchListTile(
-                        title: Text('Fill to Full'),
-                        value: _isFillToFull,
-                        onChanged: (value) {
-                          setState(() {
-                            _isFillToFull = value;
-                          });
-                        },
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SwitchListTile(
+                          title: Text('Fill to Full'),
+                          value: _isFillToFull,
+                          onChanged: (value) {
+                            setState(() {
+                              _isFillToFull = value;
+                            });
+                          },
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: SwitchListTile(
-                        title: Text('Missed Fuel Up'),
-                        value: _missedFuelUp,
-                        onChanged: (value) {
-                          setState(() {
-                            _missedFuelUp = value;
-                          });
-                        },
+                      Expanded(
+                        child: SwitchListTile(
+                          title: Text('Missed Refuel'),
+                          value: _missedFuelUp,
+                          onChanged: (value) {
+                            setState(() {
+                              _missedFuelUp = value;
+                            });
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Handle saving the expense
-                    }
-                  },
+                  onPressed: _submitForm,
                   child: Text('Save'),
                 ),
               ),
