@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path_helper;
 import 'records_models.dart';
 import 'vehicle.dart';
+import 'add_expense_page.dart';
 
 class VehicleDetailPage extends StatefulWidget {
   final Car car;
@@ -182,6 +183,17 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
                         return RecordListItem(record: allRecords[index]);
                       },
                     ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddExpensePage(car: widget.car),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
