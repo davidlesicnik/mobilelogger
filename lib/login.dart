@@ -57,14 +57,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _saveLogin(String username, String password, String url) async {
-    if (_database != null) {
+    if (_database != null && _rememberMe) {
+      // First, delete any existing login data
+      await _database!.delete('login');
+
+      // Then insert the new login data
       await _database!.insert(
         'login',
         {'username': username, 'password': password, 'url': url},
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    } else {
-      print('Error: Database is not initialized.');
     }
   }
 
@@ -90,7 +92,8 @@ class _LoginPageState extends State<LoginPage> {
         }
 
         final List<dynamic> vehiclesData = json.decode(response.body);
-        final List<Car> cars = vehiclesData.map((data) => Car.fromJson(data)).toList();
+        final List<Car> cars =
+            vehiclesData.map((data) => Car.fromJson(data)).toList();
 
         if (!mounted) return;
         Navigator.push(
