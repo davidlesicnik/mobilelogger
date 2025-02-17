@@ -1,1 +1,0 @@
-/home/david/git/mobilelogger/build/app/intermediates/cxx/Debug/6r1gt424/obj/x86_64
