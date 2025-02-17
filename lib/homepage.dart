@@ -8,10 +8,10 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key, this.cars});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   List<Car> cars = [];
 
   @override
