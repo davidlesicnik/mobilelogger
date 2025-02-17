@@ -11,10 +11,10 @@ class AddGasRecordPage extends StatefulWidget {
   const AddGasRecordPage({super.key, required this.vehicleId});
 
   @override
-  _AddGasRecordPageState createState() => _AddGasRecordPageState();
+  AddGasRecordPageState createState() => AddGasRecordPageState();
 }
 
-class _AddGasRecordPageState extends State<AddGasRecordPage> {
+class AddGasRecordPageState extends State<AddGasRecordPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _odometerController = TextEditingController();
@@ -95,6 +95,8 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
         },
         body: json.encode(gasRecord),
       );
+
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -229,10 +231,10 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _submitForm,
-        child: Icon(Icons.check),
         backgroundColor: Colors.green, // Set FAB color to green
         // Increase the size of the FAB
         mini: false,
+        child: Icon(Icons.check),
       ),
     );
   }

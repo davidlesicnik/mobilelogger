@@ -17,10 +17,10 @@ class VehicleDetailPage extends StatefulWidget {
   });
 
   @override
-  _VehicleDetailPageState createState() => _VehicleDetailPageState();
+  VehicleDetailPageState createState() => VehicleDetailPageState();
 }
 
-class _VehicleDetailPageState extends State<VehicleDetailPage> {
+class VehicleDetailPageState extends State<VehicleDetailPage> {
   List<GasRecord> gasRecords = [];
   List<ServiceRecord> serviceRecords = [];
   List<RepairRecord> repairRecords = [];
@@ -166,8 +166,8 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
             await fetchAllRecords(baseUrl);
           }
         },
+        backgroundColor: Colors.green,
         child: Icon(Icons.add),
-        backgroundColor: Colors.green, // Set FAB color to green
       ),
     );
   }
