@@ -16,6 +16,17 @@ class BaseRecord {
     required this.extraFields,
     required this.files,
   });
+
+  factory BaseRecord.fromJson(Map<String, dynamic> json) {
+    return BaseRecord(
+      id: json['id'],
+      date: DateFormat('d. MM. yyyy').parse(json['date']),
+      notes: json['notes'],
+      tags: json['tags'] ?? '',
+      extraFields: json['extraFields'] ?? [],
+      files: json['files'] ?? [],
+    );
+  }
 }
 
 class GasRecord extends BaseRecord {
@@ -75,6 +86,20 @@ class OdometerRecord extends BaseRecord {
     required super.extraFields,
     required super.files,
   });
+
+  factory OdometerRecord.fromJson(Map<String, dynamic> json) {
+    return OdometerRecord(
+      id: json['id'],
+      date: DateFormat('d. MM. yyyy').parse(json['date']),
+      odometer: int.parse(json['odometer']),
+      cost: double.parse(json['cost'].replaceAll(',', '.')),
+      description: json['description'],
+      notes: json['notes'],
+      tags: json['tags'] ?? '',
+      extraFields: json['extraFields'] ?? [],
+      files: json['files'] ?? [],
+    );
+  }
 }
 
 class ServiceRecord extends OdometerRecord {
