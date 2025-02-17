@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path_helper;
+import 'package:intl/intl.dart';
 
 class AddGasRecordPage extends StatefulWidget {
   final String vehicleId;
@@ -19,7 +20,7 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
   final TextEditingController _odometerController = TextEditingController();
   final TextEditingController _fuelConsumedController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
-  bool _isFillToFull = false;
+  bool _isFillToFull = true; // Preselect "Filled To Full" by default
   bool _missedFuelUp = false;
   late String basicAuth;
   late String baseUrl;
@@ -29,6 +30,7 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
   void initState() {
     super.initState();
     _initDatabase();
+    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now()); // Prefill with today's date
   }
 
   @override
@@ -133,51 +135,84 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _dateController,
-                decoration: InputDecoration(
-                  labelText: 'Date',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _dateController,
+                        decoration: InputDecoration(
+                          labelText: 'Date',
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: () => _selectDate(context),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a date';
+                          }
+                          return null;
+                        },
+                        readOnly: true,
+                        onTap: () => _selectDate(context),
+                      ),
+                      SizedBox(height: 16.0),
+                      TextFormField(
+                        controller: _odometerController,
+                        decoration: InputDecoration(
+                          labelText: 'Odometer',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the odometer reading';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.0),
+                      TextFormField(
+                        controller: _fuelConsumedController,
+                        decoration: InputDecoration(
+                          labelText: 'Fuel added',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the fuel added';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.0),
+                      TextFormField(
+                        controller: _costController,
+                        decoration: InputDecoration(
+                          labelText: 'Cost',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the cost';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a date';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _odometerController,
-                decoration: InputDecoration(labelText: 'Odometer'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the odometer reading';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _fuelConsumedController,
-                decoration: InputDecoration(labelText: 'Fuel added'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the fuel added';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _costController,
-                decoration: InputDecoration(labelText: 'Cost'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the cost';
-                  }
-                  return null;
-                },
               ),
               SwitchListTile(
                 title: Text('Filled To Full'),
@@ -187,6 +222,10 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
                     _isFillToFull = value;
                   });
                 },
+                activeColor: Colors.green, // Pastel green color for the thumb
+                activeTrackColor: Color(0xFFD4F1D4), // Light steel blue color for the track
+                inactiveThumbColor: Colors.grey, // Grey color for the thumb when inactive
+                inactiveTrackColor: Colors.black12, // Light grey color for the track when inactive
               ),
               SwitchListTile(
                 title: Text('Missed Fuel Up'),
@@ -196,15 +235,18 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
                     _missedFuelUp = value;
                   });
                 },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Submit'),
+                activeColor: Color(0xFFC1E1C1), // Pastel green color
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _submitForm,
+        child: Icon(Icons.check),
+        backgroundColor: Color(0xFFC1E1C1), // Pastel green color
+        // Increase the size of the FAB
+        mini: false,
       ),
     );
   }

@@ -171,6 +171,7 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.car.year} ${widget.car.make} ${widget.car.model}'),
+        backgroundColor: Colors.green, // Set AppBar color to green
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -198,6 +199,7 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
           }
         },
         child: Icon(Icons.add),
+        backgroundColor: Colors.green, // Set FAB color to green
       ),
     );
   }
@@ -276,7 +278,7 @@ class RecordListItem extends StatelessWidget {
       case 'Repair':
         return Colors.red;
       case 'Upgrade':
-        return Colors.purple;
+        return Colors.green; // Change to green
       case 'Tax':
         return Colors.orange;
       default:
