@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path_helper;
+import 'package:intl/intl.dart';
 
 class AddGasRecordPage extends StatefulWidget {
   final String vehicleId;
@@ -19,7 +20,7 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
   final TextEditingController _odometerController = TextEditingController();
   final TextEditingController _fuelConsumedController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
-  bool _isFillToFull = false;
+  bool _isFillToFull = true; // Preselect "Filled To Full" by default
   bool _missedFuelUp = false;
   late String basicAuth;
   late String baseUrl;
@@ -29,6 +30,7 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
   void initState() {
     super.initState();
     _initDatabase();
+    _dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now()); // Prefill with today's date
   }
 
   @override
@@ -121,11 +123,40 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
     }
   }
 
+  Widget _buildTextFormField({
+    required TextEditingController controller,
+    required String labelText,
+    required String validatorMessage,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    Widget? suffixIcon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return validatorMessage;
+        }
+        return null;
+      },
+      readOnly: readOnly,
+      onTap: onTap,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Gas Record'),
+        backgroundColor: Colors.green, // Set AppBar color to green
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -133,51 +164,44 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _dateController,
-                decoration: InputDecoration(
-                  labelText: 'Date',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      _buildTextFormField(
+                        controller: _dateController,
+                        labelText: 'Date',
+                        validatorMessage: 'Please enter a date',
+                        readOnly: true,
+                        onTap: () => _selectDate(context),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.calendar_today),
+                          onPressed: () => _selectDate(context),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _odometerController,
+                        labelText: 'Odometer',
+                        validatorMessage: 'Please enter the odometer reading',
+                      ),
+                      SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _fuelConsumedController,
+                        labelText: 'Fuel added',
+                        validatorMessage: 'Please enter the fuel added',
+                      ),
+                      SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _costController,
+                        labelText: 'Cost',
+                        validatorMessage: 'Please enter the cost',
+                      ),
+                    ],
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a date';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _odometerController,
-                decoration: InputDecoration(labelText: 'Odometer'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the odometer reading';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _fuelConsumedController,
-                decoration: InputDecoration(labelText: 'Fuel added'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the fuel added';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _costController,
-                decoration: InputDecoration(labelText: 'Cost'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the cost';
-                  }
-                  return null;
-                },
               ),
               SwitchListTile(
                 title: Text('Filled To Full'),
@@ -187,6 +211,7 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
                     _isFillToFull = value;
                   });
                 },
+                activeColor: Colors.green, // Set switch active color to green
               ),
               SwitchListTile(
                 title: Text('Missed Fuel Up'),
@@ -196,15 +221,18 @@ class _AddGasRecordPageState extends State<AddGasRecordPage> {
                     _missedFuelUp = value;
                   });
                 },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Submit'),
+                activeColor: Colors.green, // Set switch active color to green
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _submitForm,
+        child: Icon(Icons.check),
+        backgroundColor: Colors.green, // Set FAB color to green
+        // Increase the size of the FAB
+        mini: false,
       ),
     );
   }

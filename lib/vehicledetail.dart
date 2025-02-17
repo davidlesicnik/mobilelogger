@@ -75,11 +75,11 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
   Future<void> fetchAllRecords(String baseUrl) async {
     try {
       final responses = await Future.wait([
-        fetchGasRecords(baseUrl),
-        fetchServiceRecords(baseUrl),
-        fetchRepairRecords(baseUrl),
-        fetchUpgradeRecords(baseUrl),
-        fetchTaxRecords(baseUrl),
+        fetchRecords<GasRecord>(baseUrl, 'gasrecords'),
+        fetchRecords<ServiceRecord>(baseUrl, 'servicerecords'),
+        fetchRecords<RepairRecord>(baseUrl, 'repairrecords'),
+        fetchRecords<UpgradeRecord>(baseUrl, 'upgraderecords'),
+        fetchRecords<TaxRecord>(baseUrl, 'taxrecords'),
       ]);
 
       setState(() {
@@ -98,64 +98,32 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
     }
   }
 
-  Future<List<GasRecord>> fetchGasRecords(String baseUrl) async {
+  Future<List<T>> fetchRecords<T>(String baseUrl, String endpoint) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/api/vehicle/gasrecords?vehicleId=${widget.car.id}'),
+      Uri.parse('$baseUrl/api/vehicle/$endpoint?vehicleId=${widget.car.id}'),
       headers: {'authorization': basicAuth},
     );
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => GasRecord.fromJson(json)).toList();
+      return data.map((json) => _fromJson<T>(json)).toList();
     }
-    throw Exception('Failed to load gas records');
+    throw Exception('Failed to load $endpoint');
   }
 
-  Future<List<ServiceRecord>> fetchServiceRecords(String baseUrl) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/vehicle/servicerecords?vehicleId=${widget.car.id}'),
-      headers: {'authorization': basicAuth},
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => ServiceRecord.fromJson(json)).toList();
+  T _fromJson<T>(Map<String, dynamic> json) {
+    if (T == GasRecord) {
+      return GasRecord.fromJson(json) as T;
+    } else if (T == ServiceRecord) {
+      return ServiceRecord.fromJson(json) as T;
+    } else if (T == RepairRecord) {
+      return RepairRecord.fromJson(json) as T;
+    } else if (T == UpgradeRecord) {
+      return UpgradeRecord.fromJson(json) as T;
+    } else if (T == TaxRecord) {
+      return TaxRecord.fromJson(json) as T;
+    } else {
+      throw Exception('Unknown class');
     }
-    throw Exception('Failed to load service records');
-  }
-
-  Future<List<RepairRecord>> fetchRepairRecords(String baseUrl) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/vehicle/repairrecords?vehicleId=${widget.car.id}'),
-      headers: {'authorization': basicAuth},
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => RepairRecord.fromJson(json)).toList();
-    }
-    throw Exception('Failed to load repair records');
-  }
-
-  Future<List<UpgradeRecord>> fetchUpgradeRecords(String baseUrl) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/vehicle/upgraderecords?vehicleId=${widget.car.id}'),
-      headers: {'authorization': basicAuth},
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => UpgradeRecord.fromJson(json)).toList();
-    }
-    throw Exception('Failed to load upgrade records');
-  }
-
-  Future<List<TaxRecord>> fetchTaxRecords(String baseUrl) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/vehicle/taxrecords?vehicleId=${widget.car.id}'),
-      headers: {'authorization': basicAuth},
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => TaxRecord.fromJson(json)).toList();
-    }
-    throw Exception('Failed to load tax records');
   }
 
   @override
@@ -171,6 +139,7 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.car.year} ${widget.car.make} ${widget.car.model}'),
+        backgroundColor: Colors.green, // Set AppBar color to green
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -198,6 +167,7 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
           }
         },
         child: Icon(Icons.add),
+        backgroundColor: Colors.green, // Set FAB color to green
       ),
     );
   }
