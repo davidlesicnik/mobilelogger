@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path_helper;
 import 'records_models.dart';
 import 'vehicle.dart';
+import 'add_gas_record_page.dart';
 
 class VehicleDetailPage extends StatefulWidget {
   final Car car;
@@ -30,6 +31,7 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
 
   late String basicAuth;
   Database? _database;
+  late String baseUrl;
 
   @override
   void initState() {
@@ -53,7 +55,7 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
       final login = maps.first;
       final String username = login['username'];
       final String password = login['password'];
-      String baseUrl = login['url'];
+      baseUrl = login['url'];
 
       // Ensure the URL includes the scheme
       if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
@@ -182,6 +184,21 @@ class _VehicleDetailPageState extends State<VehicleDetailPage> {
                         return RecordListItem(record: allRecords[index]);
                       },
                     ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddGasRecordPage(vehicleId: widget.car.id.toString())),
+          );
+          if (result == true) {
+            setState(() {
+              isLoading = true;
+            });
+            await fetchAllRecords(baseUrl);
+          }
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
