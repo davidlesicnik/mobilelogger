@@ -14,6 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _urlController = TextEditingController();
@@ -78,6 +79,26 @@ class LoginPageState extends State<LoginPage> {
     final String basicAuth =
         'Basic ${base64Encode(utf8.encode('$username:$password'))}';
 
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16.0),
+                Text('Logging in...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
     try {
       final response = await http.get(
         Uri.parse('$url/api/vehicles'),
@@ -85,6 +106,8 @@ class LoginPageState extends State<LoginPage> {
           'authorization': basicAuth,
         },
       );
+
+      Navigator.of(context).pop(); // Close the progress dialog
 
       if (response.statusCode == 200) {
         if (_rememberMe) {
@@ -119,6 +142,7 @@ class LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      Navigator.of(context).pop(); // Close the progress dialog
       if (!mounted) return;
       showDialog(
         context: context,
@@ -136,63 +160,103 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
+  Widget _buildTextFormField({
+    required TextEditingController controller,
+    required String labelText,
+    required String validatorMessage,
+    bool obscureText = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return validatorMessage;
+        }
+        return null;
+      },
+      obscureText: obscureText,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Login to LubeLogger instance'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            TextField(
-              controller: _urlController,
-              decoration: InputDecoration(labelText: 'URL'),
-            ),
-            Row(
-              children: <Widget>[
-                Checkbox(
-                  value: _rememberMe,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _rememberMe = value!;
-                    });
-                  },
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          _buildTextFormField(
+                            controller: _usernameController,
+                            labelText: 'Username',
+                            validatorMessage: 'Please enter your username',
+                          ),
+                          SizedBox(height: 16.0),
+                          _buildTextFormField(
+                            controller: _passwordController,
+                            labelText: 'Password',
+                            validatorMessage: 'Please enter your password',
+                            obscureText: true,
+                          ),
+                          SizedBox(height: 16.0),
+                          _buildTextFormField(
+                            controller: _urlController,
+                            labelText: 'URL',
+                            validatorMessage: 'Please enter the URL',
+                          ),
+                          SizedBox(height: 16.0),
+                          Row(
+                            children: <Widget>[
+                              Checkbox(
+                                value: _rememberMe,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _rememberMe = value!;
+                                  });
+                                },
+                              ),
+                              Text('Remember Me'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            _loginFuture = _login();
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                      ),
+                      child: Text('Login'),
+                    ),
+                  ],
                 ),
-                Text('Remember Me'),
-              ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _loginFuture = _login();
-                });
-              },
-              child: Text('Login'),
-            ),
-            if (_loginFuture != null)
-              FutureBuilder<void>(
-                future: _loginFuture,
-                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else {
-                    return Container();
-                  }
-                },
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

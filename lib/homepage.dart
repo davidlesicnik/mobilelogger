@@ -38,6 +38,7 @@ class HomePageState extends State<HomePage> {
                     vertical: 8.0,
                   ),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(16.0),
                     title: Text(
                       '${car.year} ${car.make} ${car.model}',
                       style: const TextStyle(
@@ -45,9 +46,15 @@ class HomePageState extends State<HomePage> {
                         fontSize: 16,
                       ),
                     ),
-                    subtitle: Text(
-                      'License Plate: ${car.licensePlate}',
-                      style: const TextStyle(fontSize: 14),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8.0),
+                        Text(
+                          'License Plate: ${car.licensePlate}',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
                     ),
                     onTap: () {
                       Navigator.push(

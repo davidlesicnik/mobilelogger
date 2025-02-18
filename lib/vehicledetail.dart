@@ -139,7 +139,6 @@ class VehicleDetailPageState extends State<VehicleDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.car.year} ${widget.car.make} ${widget.car.model}'),
-        backgroundColor: Colors.green, // Set AppBar color to green
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -166,7 +165,6 @@ class VehicleDetailPageState extends State<VehicleDetailPage> {
             await fetchAllRecords(baseUrl);
           }
         },
-        backgroundColor: Colors.green,
         child: Icon(Icons.add),
       ),
     );

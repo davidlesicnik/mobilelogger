@@ -157,84 +157,95 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Gas Record'),
-        backgroundColor: Colors.green, // Set AppBar color to green
+        title: Text('Add Refueling Record'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
-              Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      _buildTextFormField(
-                        controller: _dateController,
-                        labelText: 'Date',
-                        validatorMessage: 'Please enter a date',
-                        readOnly: true,
-                        onTap: () => _selectDate(context),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.calendar_today),
-                          onPressed: () => _selectDate(context),
+              Expanded(
+                child: ListView(
+                  children: [
+                    Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            _buildTextFormField(
+                              controller: _dateController,
+                              labelText: 'Date',
+                              validatorMessage: 'Please enter a date',
+                              readOnly: true,
+                              onTap: () => _selectDate(context),
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.calendar_today),
+                                onPressed: () => _selectDate(context),
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            _buildTextFormField(
+                              controller: _odometerController,
+                              labelText: 'Odometer',
+                              validatorMessage: 'Please enter the odometer reading',
+                            ),
+                            SizedBox(height: 16.0),
+                            _buildTextFormField(
+                              controller: _fuelConsumedController,
+                              labelText: 'Fuel added',
+                              validatorMessage: 'Please enter the fuel added',
+                            ),
+                            SizedBox(height: 16.0),
+                            _buildTextFormField(
+                              controller: _costController,
+                              labelText: 'Cost',
+                              validatorMessage: 'Please enter the cost',
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 16.0),
-                      _buildTextFormField(
-                        controller: _odometerController,
-                        labelText: 'Odometer',
-                        validatorMessage: 'Please enter the odometer reading',
+                    ),
+                    SizedBox(height: 16.0),
+                    SwitchListTile(
+                      title: Text('Filled To Full'),
+                      value: _isFillToFull,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _isFillToFull = value;
+                        });
+                      },
+                      activeColor: Color(0xFF77DD77), // Pastel green color for the thumb
+                      activeTrackColor: Color(0xFFD4F1D4), // Light steel blue color for the track
+                    ),
+                    SizedBox(height: 8.0),
+                    SwitchListTile(
+                      title: Text('Missed Fuel Up'),
+                      value: _missedFuelUp,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _missedFuelUp = value;
+                        });
+                      },
+                      activeColor: Color(0xFF77DD77), // Pastel green color for the thumb
+                      activeTrackColor: Color(0xFFD4F1D4), // Light steel blue color for the track
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFA3D9A5),
+                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                       ),
-                      SizedBox(height: 16.0),
-                      _buildTextFormField(
-                        controller: _fuelConsumedController,
-                        labelText: 'Fuel added',
-                        validatorMessage: 'Please enter the fuel added',
-                      ),
-                      SizedBox(height: 16.0),
-                      _buildTextFormField(
-                        controller: _costController,
-                        labelText: 'Cost',
-                        validatorMessage: 'Please enter the cost',
-                      ),
-                    ],
-                  ),
+                      child: Text('Submit'),
+                    ),
+                  ],
                 ),
-              ),
-              SwitchListTile(
-                title: Text('Filled To Full'),
-                value: _isFillToFull,
-                onChanged: (bool value) {
-                  setState(() {
-                    _isFillToFull = value;
-                  });
-                },
-                activeColor: Colors.green, // Set switch active color to green
-              ),
-              SwitchListTile(
-                title: Text('Missed Fuel Up'),
-                value: _missedFuelUp,
-                onChanged: (bool value) {
-                  setState(() {
-                    _missedFuelUp = value;
-                  });
-                },
-                activeColor: Colors.green, // Set switch active color to green
               ),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _submitForm,
-        backgroundColor: Colors.green, // Set FAB color to green
-        // Increase the size of the FAB
-        mini: false,
-        child: Icon(Icons.check),
       ),
     );
   }
