@@ -165,7 +165,6 @@ class VehicleDetailPageState extends State<VehicleDetailPage> {
             await fetchAllRecords(baseUrl);
           }
         },
-        backgroundColor: Color(0xFFa3d9a5),
         child: Icon(Icons.add),
       ),
     );
