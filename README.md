@@ -1,12 +1,13 @@
 # MobileLogger
 
-MobileLogger is a Flutter-based mobile client for the vehicle expense tracker LubeLogger. This application allows users to log in, view their vehicles, and track expenses related to their vehicles.
+MobileLogger is a Flutter-based mobile client for the vehicle expense tracker LubeLogger.
 
 ## Features
 
 - User authentication 
 - View a list of vehicles
 - View overview of records for each vehicle
+- Add refueling records
 
 ## Getting Started
 
@@ -19,7 +20,7 @@ MobileLogger is a Flutter-based mobile client for the vehicle expense tracker Lu
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/mobilelogger.git
+   git clone https://github.com/davidlesicnik/mobilelogger.git
    cd mobilelogger
    ```
 
@@ -35,15 +36,6 @@ MobileLogger is a Flutter-based mobile client for the vehicle expense tracker Lu
    ```sh
    flutter run
    ```
-
-## Project Structure
-
-- `lib/main.dart`: Entry point of the application.
-- `lib/login.dart`: Contains the login screen and authentication logic.
-- `lib/homepage.dart`: Contains the home screen displaying the list of vehicles.
-- `lib/vehicledetail.dart`: Contains the vehicle detail screen displaying records for a selected vehicle.
-- `lib/vehicle.dart`: Defines the `Car` class used to represent vehicle data.
-- `lib/records_models.dart`: Defines the record models used to represent various types of records.
 
 ## Dependencies
 

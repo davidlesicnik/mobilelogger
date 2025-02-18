@@ -19,6 +19,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter # Required for testing Flutter applications
   flutter_lints: ^5.0.0 # Provides linting rules for Flutter projects
+  flutter_launcher_icons: "^0.14.3" # Used for generating app icons
 
 flutter:
   uses-material-design: true
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/icon.png"
+  min_sdk_android: 21
