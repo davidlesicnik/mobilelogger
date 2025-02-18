@@ -207,6 +207,7 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 16.0),
                     SwitchListTile(
                       title: Text('Filled To Full'),
                       value: _isFillToFull,
@@ -215,8 +216,10 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
                           _isFillToFull = value;
                         });
                       },
-                      activeColor: Colors.green, // Set switch active color to green
+                      activeColor: Color(0xFF77DD77), // Pastel green color for the thumb
+                      activeTrackColor: Color(0xFFD4F1D4), // Light steel blue color for the track
                     ),
+                    SizedBox(height: 8.0),
                     SwitchListTile(
                       title: Text('Missed Fuel Up'),
                       value: _missedFuelUp,
@@ -225,12 +228,14 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
                           _missedFuelUp = value;
                         });
                       },
-                      activeColor: Colors.green, // Set switch active color to green
+                      activeColor: Color(0xFF77DD77), // Pastel green color for the thumb
+                      activeTrackColor: Color(0xFFD4F1D4), // Light steel blue color for the track
                     ),
+                    SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFa3d9a5),
+                        backgroundColor: Color(0xFFA3D9A5),
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                       ),
                       child: Text('Submit'),
