@@ -132,6 +132,7 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
     bool readOnly = false,
     VoidCallback? onTap,
     Widget? suffixIcon,
+    TextInputType keyboardType = TextInputType.text, // Add keyboardType parameter
   }) {
     return TextFormField(
       controller: controller,
@@ -150,6 +151,7 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
       },
       readOnly: readOnly,
       onTap: onTap,
+      keyboardType: keyboardType, // Set keyboardType
     );
   }
 
@@ -190,18 +192,21 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
                               controller: _odometerController,
                               labelText: 'Odometer',
                               validatorMessage: 'Please enter the odometer reading',
+                              keyboardType: TextInputType.number, // Set numeric keyboard
                             ),
                             SizedBox(height: 16.0),
                             _buildTextFormField(
                               controller: _fuelConsumedController,
                               labelText: 'Fuel added',
                               validatorMessage: 'Please enter the fuel added',
+                              keyboardType: TextInputType.number, // Set numeric keyboard
                             ),
                             SizedBox(height: 16.0),
                             _buildTextFormField(
                               controller: _costController,
                               labelText: 'Cost',
                               validatorMessage: 'Please enter the cost',
+                              keyboardType: TextInputType.number, // Set numeric keyboard
                             ),
                           ],
                         ),
