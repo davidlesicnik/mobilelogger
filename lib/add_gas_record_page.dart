@@ -235,10 +235,16 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
                     ElevatedButton(
                       onPressed: _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFA3D9A5),
+                        backgroundColor: Colors.transparent,
+                        side: BorderSide(color: Color(0xFFA3D9A5), width: 2),
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
                       ),
-                      child: Text('Submit'),
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.green),
+                      ),
                     ),
                   ],
                 ),
