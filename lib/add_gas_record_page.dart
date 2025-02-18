@@ -111,6 +111,22 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
     }
   }
 
+  void _formatPOSInput(TextEditingController controller, String value) {
+    String digitsOnly = value.replaceAll(RegExp(r'\D'), '');
+    if (digitsOnly.isEmpty) {
+      controller.text = '';
+      return;
+    }
+
+    int number = int.parse(digitsOnly);
+    String formatted = (number / 100).toStringAsFixed(2);
+
+    controller.value = TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -132,26 +148,20 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
     bool readOnly = false,
     VoidCallback? onTap,
     Widget? suffixIcon,
-    TextInputType keyboardType = TextInputType.text, // Add keyboardType parameter
+    TextInputType keyboardType = TextInputType.text,
+    ValueChanged<String>? onChanged,
   }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
-        suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return validatorMessage;
-        }
-        return null;
-      },
+      validator: (value) => (value == null || value.isEmpty) ? validatorMessage : null,
       readOnly: readOnly,
       onTap: onTap,
-      keyboardType: keyboardType, // Set keyboardType
+      keyboardType: keyboardType,
+      onChanged: onChanged,
     );
   }
 
@@ -199,14 +209,16 @@ class AddGasRecordPageState extends State<AddGasRecordPage> {
                               controller: _fuelConsumedController,
                               labelText: 'Fuel added',
                               validatorMessage: 'Please enter the fuel added',
-                              keyboardType: TextInputType.number, // Set numeric keyboard
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) => _formatPOSInput(_fuelConsumedController, value),
                             ),
                             SizedBox(height: 16.0),
                             _buildTextFormField(
                               controller: _costController,
                               labelText: 'Cost',
                               validatorMessage: 'Please enter the cost',
-                              keyboardType: TextInputType.number, // Set numeric keyboard
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) => _formatPOSInput(_costController, value),
                             ),
                           ],
                         ),
